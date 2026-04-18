@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="DevUtils.ExtensionVS.428cd741-fd1a-4c87-9cab-7ae9eed0a1dd" Version="1.0.0" Language="en-US" Publisher="Diego Martins" />
+    <DisplayName>Dev Utils</DisplayName>
+    <Description xml:space="preserve">A productivity extension for Visual Studio 2022 that automates common development tasks directly from the Solution Explorer context menu.
+
+Features:
+- Batch Extract Interfaces — generates IClassName interfaces from public classes in bulk
+- Generate DI Registration — creates an extension method with AddScoped/AddTransient/AddSingleton registrations
+- DI Injection Analyzer — scans the solution for classes that should receive injected dependencies and injects them automatically
+- Format All Files — formats an entire project or solution using dotnet format (fast, background) or the built-in VS formatter
+
+All operations are logged to the "Dev Utils" output pane.</Description>
+    <MoreInfo>https://github.com/DiegoSDeveloper/DevUtilsExtensionVS</MoreInfo>
+    <License>LICENSE.txt</License>
+    <Icon>Resources/DevUtilsIcon.png</Icon>
+    <PreviewImage>Resources/DevUtilsPreview.png</PreviewImage>
+    <Tags>di,dependency injection,interface,extract,format,refactor,productivity,code generation</Tags>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.Professional" Version="[17.0, 18.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[17.0, 18.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.7.2,)" />
+  </Dependencies>
+  <Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,18.0)" DisplayName="Visual Studio core editor" />
+  </Prerequisites>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+  </Assets>
+</PackageManifest>

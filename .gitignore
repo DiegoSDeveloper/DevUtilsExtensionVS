@@ -1,0 +1,35 @@
+# Visual Studio build outputs
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.vspscc
+*.vssscc
+
+# VS Code
+.vscode/
+
+# VSIX output
+*.vsix
+
+# NuGet
+packages/
+*.nupkg
+project.lock.json
+project.assets.json
+
+# ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# Rider
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Key file (keep Key.snk out of source control if it contains a private key)
+# Comment the line below if you want to include it
+DevUtils.ExtensionVS/Key.snk

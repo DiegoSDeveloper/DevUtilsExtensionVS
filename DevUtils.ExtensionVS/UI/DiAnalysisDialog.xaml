@@ -1,0 +1,151 @@
+﻿<platform:DialogWindow
+    x:Class="DevUtils.ExtensionVS.UI.DiAnalysisDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:platform="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+    xmlns:local="clr-namespace:DevUtils.ExtensionVS.UI"
+    Title="DI Injection Analyzer"
+    Width="880" Height="580"
+    MinWidth="640" MinHeight="460"
+    WindowStartupLocation="CenterOwner"
+    HasMaximizeButton="True"
+    HasMinimizeButton="False">
+
+    <Window.Resources>
+        <local:InjectionStatusIconConverter  x:Key="IconConv"/>
+        <local:InjectionStatusColorConverter x:Key="ColorConv"/>
+        <local:BoolToVisibilityConverter     x:Key="BoolVis"/>
+    </Window.Resources>
+
+    <Grid Margin="12,10,12,8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Interface selector -->
+        <Grid Grid.Row="0" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Interface to inject:"
+                       FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <ComboBox Grid.Column="1"
+                      ItemsSource="{Binding InterfaceOptions}"
+                      SelectedItem="{Binding SelectedInterface}"
+                      DisplayMemberPath="InterfaceName"/>
+            <TextBlock Grid.Column="3" Text="Show already done"
+                       VerticalAlignment="Center" Margin="0,0,4,0"/>
+            <CheckBox Grid.Column="4" IsChecked="{Binding ShowAlreadyDone}"
+                      VerticalAlignment="Center"/>
+        </Grid>
+
+        <!-- Toolbar row -->
+        <Grid Grid.Row="1" Margin="0,0,0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Selected for injection: " VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding SelectedCount}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            </StackPanel>
+            <Button Grid.Column="1" Content="Select All Safe" Width="100"
+                    Padding="4,2" Click="OnSelectAllSafe"/>
+            <Button Grid.Column="3" Content="Deselect All" Width="82"
+                    Padding="4,2" Click="OnDeselectAll"/>
+        </Grid>
+
+        <!-- Data grid -->
+        <Border Grid.Row="2" BorderThickness="1"
+                BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
+            <DataGrid x:Name="Grid"
+                      ItemsSource="{Binding FilteredAnalyses}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      IsReadOnly="False"
+                      SelectionMode="Extended"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="Horizontal"
+                      RowHeaderWidth="0"
+                      BorderThickness="0">
+                <DataGrid.Columns>
+
+                    <!-- Checkbox -->
+                    <DataGridTemplateColumn Width="34" CanUserResize="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          IsEnabled="{Binding CanSelect}"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Status icon -->
+                    <DataGridTemplateColumn Header="Status" Width="100" CanUserResize="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Text="{Binding Status, Converter={StaticResource IconConv}}"
+                                    Foreground="{Binding Status, Converter={StaticResource ColorConv}}"
+                                    FontWeight="SemiBold"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Padding="4,2"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Target class -->
+                    <DataGridTextColumn Header="Class"
+                                        Binding="{Binding TargetClassName}"
+                                        Width="160"/>
+
+                    <!-- File path (project + subfolder + filename) -->
+                    <DataGridTextColumn Header="File"
+                                        Binding="{Binding DisplayPath}"
+                                        Width="220"/>
+
+                    <!-- Analysis detail -->
+                    <DataGridTextColumn Header="Analysis"
+                                        Binding="{Binding Reason}"
+                                        Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- Summary bar -->
+        <Border Grid.Row="3" Margin="0,4,0,0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="✔" Foreground="Green"  FontWeight="Bold" Margin="0,0,2,0"/>
+                <TextBlock Text="{Binding CountSafe}"   Margin="0,0,12,0" VerticalAlignment="Center"/>
+                <TextBlock Text="⚠" Foreground="DarkOrange" FontWeight="Bold" Margin="0,0,2,0"/>
+                <TextBlock Text="{Binding CountWarning}" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                <TextBlock Text="✖" Foreground="Red"   FontWeight="Bold" Margin="0,0,2,0"/>
+                <TextBlock Text="{Binding CountError}"  Margin="0,0,12,0" VerticalAlignment="Center"/>
+                <TextBlock Text="✔" Foreground="Gray"  FontWeight="Bold" Margin="0,0,2,0"/>
+                <TextBlock Text="{Binding CountDone}"   Margin="0,0,4,0"  VerticalAlignment="Center"
+                           Foreground="Gray"/>
+                <TextBlock Text="already done"         Foreground="Gray"  VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Dialog buttons -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal"
+                    HorizontalAlignment="Right" Margin="0,8,0,0">
+            <Button Content="Close" Width="75" Margin="0,0,6,0" IsCancel="True" Click="OnClose"/>
+            <Button Content="Inject Selected" Width="110" IsDefault="True"
+                    IsEnabled="{Binding HasSelection}" Click="OnInject"/>
+        </StackPanel>
+    </Grid>
+</platform:DialogWindow>

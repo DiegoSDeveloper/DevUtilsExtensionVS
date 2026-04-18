@@ -1,0 +1,126 @@
+﻿<platform:DialogWindow
+    x:Class="DevUtils.ExtensionVS.UI.RegisterDiDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:platform="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+    Title="Generate DI Registration"
+    Width="600" Height="580"
+    MinWidth="480" MinHeight="460"
+    WindowStartupLocation="CenterOwner"
+    HasMaximizeButton="False"
+    HasMinimizeButton="False">
+
+    <Grid Margin="12,10,12,8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Toolbar -->
+        <Grid Grid.Row="0" Margin="0,0,0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Select interface → implementation pairs:"
+                       FontWeight="SemiBold" VerticalAlignment="Center"/>
+            <Button Grid.Column="1" Content="Select All"   Width="82" Padding="4,2" Click="OnSelectAll"/>
+            <Button Grid.Column="3" Content="Deselect All" Width="82" Padding="4,2" Click="OnDeselectAll"/>
+        </Grid>
+
+        <!-- Registrations list (grouped by folder) -->
+        <Border Grid.Row="1" Margin="0,0,0,8"
+                BorderThickness="1"
+                BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
+            <ListBox x:Name="RegistrationsList"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"
+                                           FontWeight="SemiBold"
+                                           Margin="4,4,0,2"/>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListBox.GroupStyle>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Padding" Value="4,2"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                  Content="{Binding DisplayName}"
+                                  Padding="4,0"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+
+        <!-- Settings -->
+        <GroupBox Grid.Row="2" Header="Registration Settings" Margin="0,0,0,8">
+            <Grid Margin="8,6,8,6">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="4"/>
+                    <ColumnDefinition Width="72"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Scope -->
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Scope:" VerticalAlignment="Center"/>
+                <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
+                          ItemsSource="{Binding Scopes}"
+                          SelectedItem="{Binding SelectedScope}"/>
+
+                <!-- Class name -->
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Class name:" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3"
+                         Text="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <!-- Method name -->
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Method name:" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3"
+                         Text="{Binding MethodName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <!-- Namespace -->
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Namespace:" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3"
+                         Text="{Binding Namespace, UpdateSourceTrigger=PropertyChanged}"
+                         ToolTip="Namespace for the generated DI class"/>
+
+                <!-- Output folder -->
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="Output folder:" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="8" Grid.Column="1"
+                         Text="{Binding OutputFolder, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button Grid.Row="8" Grid.Column="3" Content="Browse..."
+                        Click="OnBrowseOutputFolder"/>
+            </Grid>
+        </GroupBox>
+
+        <!-- Dialog buttons -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Cancel"   Width="75" Margin="0,0,6,0" IsCancel="True" Click="OnCancel"/>
+            <Button Content="Generate" Width="75" IsDefault="True"  Click="OnGenerate"/>
+        </StackPanel>
+    </Grid>
+</platform:DialogWindow>
